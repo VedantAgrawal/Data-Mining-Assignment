@@ -1,21 +1,21 @@
+package husrm;
 
-package com.shubh4m.datamining.husrm;
- /* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
- * 
- * This file is part of the SPMF DATA MINING SOFTWARE
- * (http://www.philippe-fournier-viger.com/spmf).
- * 
- * SPMF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- * 
- * SPMF is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with
- * SPMF. If not, see <http://www.gnu.org/licenses/>.
- */
+/* This file is copyright (c) 2008-2013 Philippe Fournier-Viger
+* 
+* This file is part of the SPMF DATA MINING SOFTWARE
+* (http://www.philippe-fournier-viger.com/spmf).
+* 
+* SPMF is free software: you can redistribute it and/or modify it under the
+* terms of the GNU General Public License as published by the Free Software
+* Foundation, either version 3 of the License, or (at your option) any later
+* version.
+* 
+* SPMF is distributed in the hope that it will be useful, but WITHOUT ANY
+* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+* A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License along with
+* SPMF. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -30,21 +30,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.shubh4m.datamining.tools.MemoryLogger;
-
 /**
- * This is the implementation of the HUSRM algorithm that we have submited at MLDM 2015.
- * <br/><br/>
- * Zida, S., Fournier-Viger, P., Wu, C.-W., Lin, J. C. W., Tseng, V.S., (2015). Efficient 
- * Mining of High Utility Sequential Rules. Proc. 11th International Conference on Machine
- *  Learning and Data Mining (MLDM 2015). Springer, LNAI, 15 pages (to appear).
- * <br/>
- * 
- * @see SequenceWithUtility
- * @see SequenceDatabaseWithUtility
- * @author Souleymane Zida and Philippe Fournier-Viger, 2015
- */
-public class HUSRM {
+* This is the implementation of the HUSRM algorithm that we have submited at MLDM 2015.
+* <br/><br/>
+* Zida, S., Fournier-Viger, P., Wu, C.-W., Lin, J. C. W., Tseng, V.S., (2015). Efficient 
+* Mining of High Utility Sequential Rules. Proc. 11th International Conference on Machine
+*  Learning and Data Mining (MLDM 2015). Springer, LNAI, 15 pages (to appear).
+* <br/>
+* 
+* @see SequenceWithUtility
+* @see SequenceDatabaseWithUtility
+* @author Souleymane Zida and Philippe Fournier-Viger, 2015
+*/
+public class AlgoHUSRM {
 	// for statistics //
 	/** start time of latest execution */
 	long timeStart = 0; 
@@ -107,10 +105,10 @@ public class HUSRM {
 	/**
 	 * Default constructor
 	 */
-	public HUSRM() {
+	public AlgoHUSRM() {
 	}
 	
-    /**
+   /**
 	 * This is a structure to store some estimated utility and a list of sequence ids.
 	 * It will be use in the code for storing the estimated utility of a rule and the list
 	 * of sequence ids where the rule appears.
@@ -167,9 +165,6 @@ public class HUSRM {
 			database.print();
 		}
 		
-		// We reset the tool for calculating the maximum memory usage
-		MemoryLogger.getInstance().reset();
-
 		// we prepare the object for writing the output file
 		writer = new BufferedWriter(new FileWriter(output));
 
@@ -215,7 +210,7 @@ public class HUSRM {
 							// estimated utility f that item
 							estimatedUtility = estimatedUtility + sequence.exactUtility;
 						}
- 				
+				
 						// update the estimated utility of that item in the map
 						mapItemEstimatedUtility.put(item, estimatedUtility);
 
@@ -843,11 +838,11 @@ public class HUSRM {
 	}
 		
 
-		//We will check the current memory usage
-		MemoryLogger.getInstance().checkMemory();
-
 		// save end time
 		timeEnd = System.currentTimeMillis();
+
+		// close the file
+		writer.close();
 
 		// after the algorithm ends, we don't need a reference to the database
 		// anymore.
@@ -863,7 +858,7 @@ public class HUSRM {
 	 * @param confidence the rule confidence
 	 * @throws IOException if an error occurs when writing to file
 	 */
-	protected void saveRule(int[] antecedent, int[] consequent,
+	private void saveRule(int[] antecedent, int[] consequent,
 			double utility, double support, double confidence) throws IOException {
 
 		// increase the number of rule found
@@ -1099,7 +1094,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 					// We will add a new element (line) in the utility table
 					ElementOfTable newElement = new ElementOfTable(element.numeroSequence);
-  
+ 
 					// We will update the utility by adding the utility of item J
 					double profitItemJ = sequence.getUtilities().get(i).get(j);
 					newElement.utility = element.utility + profitItemJ;
@@ -1207,7 +1202,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 						// Create a new element (line) in the utility table for that sequence
 						ElementOfTable newElement = new ElementOfTable(element.numeroSequence);
- 
+
 						//  Add the utility of the item to the utility of the new rule
 						double profitItemJ = sequence.getUtilities().get(i).get(j);
 						newElement.utility = element.utility + profitItemJ;
@@ -1286,7 +1281,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 						// Create a new element (line) in the table
 						ElementOfTable newElement = new ElementOfTable(element.numeroSequence); 
- 
+
 						// Copy the utility of the original rule and add the utility of the item
 						// in the current sequence.
 						double profitItemJ = sequence.getUtilities().get(i).get(j);
@@ -1451,8 +1446,6 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 			}
 		}
 		
-		// Check the maximum memory usage
-		MemoryLogger.getInstance().checkMemory();
 	}
 	
 	/**
@@ -1679,8 +1672,6 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 	
 			}
 		}
-		// We check the memory usage for statistics
-		MemoryLogger.getInstance().checkMemory();
 	}
 
 	/**
@@ -1881,8 +1872,6 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 				expandSecondLeft(tableItem, nouvelAntecedent, consequent, sequenceIdentifiersNewAntecedent, tableBeta);
 			}
 		}
-		// We check the memory usage
-		MemoryLogger.getInstance().checkMemory();
 	}
 
 
@@ -1896,8 +1885,6 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 		System.out.println("\tminutil: " + minutil);
 		System.out.println("\tSequential rules count: " + ruleCount);
 		System.out.println("\tTotal time : " + (timeEnd - timeStart) + " ms");
-		System.out.println("\tMax memory (mb) : "
-				+ MemoryLogger.getInstance().getMaxMemory());
 		System.out.println("==============================================================================");
 	}
 	
@@ -1913,7 +1900,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 		/**
 		 * This method adds a sequence id to this list
-		 * @param noSequence the sequence id
+		 * @param int the sequence id
 		 */
 		public abstract void addSequenceID(int noSequence);
 
@@ -1925,7 +1912,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 		/**
 		 *  Method to intersect two lists of sequences ids
-		 * @param vector2 another list
+		 * @param vector another list
 		 * @return the intersection of this list and the other list.
 		 */
 		public abstract ListSequenceIDs intersection(ListSequenceIDs vector2);
@@ -1972,7 +1959,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 		
 		/**
 		 *  Method to intersect two lists of sequences ids
-		 * @param vector2 another list
+		 * @param vector another list
 		 * @return the intersection of this list and the other list.
 		 */
 		public ListSequenceIDs intersection(ListSequenceIDs vector2){
@@ -2015,7 +2002,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 
 			/**
 			 * This method adds a sequence id to this list
-			 * @param noSequence the sequence id
+			 * @param int the sequence id
 			 */
 			public void addSequenceID(int noSequence){
 				list.add(noSequence);
@@ -2032,7 +2019,7 @@ loop1:	for(; i < sequence.getItemsets().size(); i++){
 			
 			/**
 			 *  Method to intersect two lists of sequences ids
-			 * @param list2 another list
+			 * @param vector another list
 			 * @return the intersection of this list and the other list.
 			 */
 			public ListSequenceIDs intersection(ListSequenceIDs list2){
